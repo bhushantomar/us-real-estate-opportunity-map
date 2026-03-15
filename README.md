@@ -1,75 +1,65 @@
 # U.S. Real Estate Opportunity Map
 
-Analyzing which U.S. cities look most interesting for buying residential real estate, using assumed demo data spanning home value trend, gross rent yield, job growth, population growth, and inventory conditions.
+Interactive heatmap and analytics dashboard for exploring promising U.S. residential real estate markets using demo data for home value trend, rental yield, job growth, population growth, and inventory conditions.
 
-**Live demo:** `https://bhushantomar.github.io/us-real-estate-opportunity-map/` *(works if you create the repo with this exact name and enable GitHub Pages from `/docs`)*
+Live demo: `https://bhushantomar.github.io/us-real-estate-opportunity-map/`
 
 ![Treemap demo](assets/real-estate-heatmap-treemap.png)
 
-## What's here
+## Overview
 
-This repo mirrors the same overall pattern as the reference project: a lightweight data pipeline, a compact static dataset, and a single interactive site.
+This project visualizes 40 U.S. housing markets and ranks them across three investment lenses:
 
-It ships with:
+- **Balanced** — blends appreciation, yield, job growth, population growth, affordability, and supply tightness
+- **Appreciation** — emphasizes recent home value trend, 5-year strength, and constrained inventory
+- **Cash Flow** — favors stronger gross yield, lower entry price, and more negotiable supply
 
-- a mock dataset for 40 U.S. housing markets
-- three ranking modes: balanced, appreciation, and cash flow
-- a static interactive site with a treemap and scatter view
-- a prompt generator for LLM-assisted analysis
-- a `/docs` folder so GitHub Pages can host the demo
+The site includes two interactive views:
 
-## Data pipeline
+- **Treemap** — rectangle area is proportional to annual home sales
+- **Growth vs Yield** — bubble size represents market size, x-axis is gross yield, y-axis is 1Y home value trend
 
-1. **Source data** (`data/markets.json`) — assumed market metrics for 40 cities.
-2. **Build site data** (`build_site_data.py`) — computes tiers, scores, and writes `site/data.json` plus `docs/data.json`.
-3. **Prompt file** (`make_prompt.py`) — packages the current dataset and top-ranked markets into `prompt.md`.
-4. **Website** (`site/index.html`) — interactive treemap/scatter visualization where area = annual home sales and color = 1Y home value trend.
-5. **Pages publish target** (`docs/`) — duplicate of the static site so GitHub Pages can serve it directly.
-
-## Key files
-
-| File | Description |
-|------|-------------|
-| `data/markets.json` | Source dataset with assumed market metrics |
-| `site/data.json` | Computed frontend data used by the local site |
-| `docs/data.json` | Same dataset for GitHub Pages |
-| `site/index.html` | Local static site |
-| `docs/index.html` | GitHub Pages version of the site |
-| `build_site_data.py` | Rebuilds `site/data.json` and `docs/data.json` from source data |
-| `make_prompt.py` | Recreates `prompt.md` |
-| `prompt.md` | Single-file summary for LLM analysis |
-| `assets/` | README screenshots |
-| `PUBLISH_TO_GITHUB.md` | Exact upload and publish steps |
-
-## Opportunity scoring
-
-Each market gets a 0–10 score in three different modes:
-
-- **Balanced** — blends appreciation, yield, job growth, population growth, affordability, and supply tightness.
-- **Appreciation** — leans into recent trend, 5Y strength, and constrained inventory.
-- **Cash flow** — favors gross yield, lower entry price, and more negotiable supply.
-
-The color scale is intentionally independent from the ranking mode:
+Color is intentionally independent from the scoring mode:
 
 - **Green** = positive 1Y home value trend
 - **Red** = negative 1Y home value trend
 
-## Visualization
+## Tech stack
 
-The main visualization is an interactive view with two modes:
+- Python (standard library only)
+- Static HTML, CSS, and JavaScript
+- JSON dataset generated from a source file
+- GitHub Pages for deployment
 
-- **Treemap** — rectangle area is proportional to annual home sales.
-- **Growth vs Yield** — bubble size is market size, x-axis is gross yield, y-axis is 1Y home value trend.
+## Repository structure
 
-Hover any market to inspect the thesis. Click a market to pin it in the details panel.
+| File | Purpose |
+|---|---|
+| `data/markets.json` | Source dataset with assumed market metrics |
+| `site/index.html` | Local version of the interactive site |
+| `site/data.json` | Computed frontend data for local preview |
+| `docs/index.html` | GitHub Pages version of the site |
+| `docs/data.json` | Computed frontend data for GitHub Pages |
+| `assets/` | README screenshots |
+| `build_site_data.py` | Rebuilds `site/data.json` and `docs/data.json` from source data |
+| `standalone.html` | One-file demo version for quick sharing |
+| `pyproject.toml` | Project metadata |
 
-## Setup
+## How the data pipeline works
 
-This project uses only the Python standard library.
+1. Edit or replace `data/markets.json`
+2. Run `python build_site_data.py`
+3. The script writes updated frontend data to:
+   - `site/data.json`
+   - `docs/data.json`
+4. Commit those updated files to GitHub
+
+## Local development
+
+Rebuild data:
 
 ```bash
 python build_site_data.py
-python make_prompt.py
 ```
 
 Serve locally:
@@ -81,14 +71,22 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-## GitHub Pages
+## GitHub Pages deployment
 
-The repo is already prepared for GitHub Pages via `/docs`.
+This repo is set up to publish from the `docs/` directory.
 
-1. Create a new public repo named `us-real-estate-opportunity-map`.
-2. Upload this bundle or push it with git.
-3. In GitHub repo settings, enable **Pages** from the `main` branch and `/docs` folder.
-4. Your demo URL should become `https://bhushantomar.github.io/us-real-estate-opportunity-map/`.
+1. Open your repository on GitHub
+2. Go to **Settings** → **Pages**
+3. Under **Build and deployment**, choose:
+   - **Source:** Deploy from a branch
+   - **Branch:** `main`
+   - **Folder:** `/docs`
+4. Save the settings
+5. Wait for the site to deploy
+
+Your site should be available at:
+
+`https://bhushantomar.github.io/us-real-estate-opportunity-map/`
 
 ## Screenshots
 
@@ -100,8 +98,21 @@ The repo is already prepared for GitHub Pages via `/docs`.
 
 ![Scatter](assets/real-estate-heatmap-scatter.png)
 
+## Updating the project
+
+To refresh the rankings or swap in a better dataset:
+
+1. Update `data/markets.json`
+2. Run `python build_site_data.py`
+3. Review the generated `site/data.json` and `docs/data.json`
+4. Commit and push changes
+
 ## Notes
 
-- All numbers in this starter are **assumed demo values**, not live market data.
-- Replace `data/markets.json` with real exports from Zillow, Redfin, Census, BLS, or your own pipeline when you are ready.
-- This is a design and repo starter, not investment advice.
+- All figures in this version are assumed demo values, not live market data
+- This project is a visualization and ranking demo, not investment advice
+- You can later replace the demo dataset with exports from Zillow, Redfin, Census, BLS, or your own pipeline
+
+## License
+
+MIT
